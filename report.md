@@ -10,17 +10,14 @@ def managerLogin():
 @app.route("/SecurityLogin", methods=['GET', 'POST'])
 def securityLogin():
     ...
+
 ```
 
-### Description
+### Vulnerability Explanation
 
-The routes `/ManagerLogin` and `/SecurityLogin` accept unlimited POST requests without any rate limiting or request throttling. This could lead to a Denial of Service (DoS) attack if a malicious user sends a large number of requests to these routes.
+The routes `/ManagerLogin` and `/SecurityLogin` accept unlimited POST requests without any rate limiting or request throttling. This could lead to a Denial of Service (DoS) attack if a malicious user sends a large number of requests to these routes. Each request hits the database and checks hashed passwords with bcrypt(which is computationally expensive), consuming resources on the server. Eventually, the server may become overloaded and unable to handle the requests, which violates the **availability** of the application.
 
-If successful, the DoS attack would result in excessive resource consumption (CPU, memory, etc.) on the server, potentially causing it to crash or become unavailable.
-
-This compromises the **availability** of the application, making it less secure and less accessible to users.
-
-### Countermeasures
+### How to Patch the Vulnerability
 
 #### Rate Limiting
 
@@ -48,12 +45,12 @@ limiter = Limiter(
 
 ```python
 @app.route("/ManagerLogin", methods=['GET', 'POST'])
-@limiter.limit("10 per minute") # limit to 10 requests per minute
+@limiter.limit("5 per minute") # limit to 5 requests per minute
 def managerLogin():
     ...
     
 @app.route("/SecurityLogin", methods=['GET', 'POST'])
-@limiter.limit("10 per minute") # limit to 10 requests per minute
+@limiter.limit("5 per minute") # limit to 5 requests per minute
 def securityLogin():
     ...
 ```
