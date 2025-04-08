@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  flaskapp:
+    build: .
+    ports:
+      - "5001:5001"
+    depends_on:
+      - db
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=example
+      - MYSQL_DB=onlinesystem
+    volumes:
+      - ./app:/app
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: onlinesystem
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d

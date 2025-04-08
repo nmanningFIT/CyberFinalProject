@@ -13,12 +13,16 @@ pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
 app.secret_key = "super-secret-key"
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:@localhost/onlinesystem"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:@localhost/onlinesystem"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:example@db/onlinesystem'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
-# --------rate limiting configuration--------
-limiter = Limiter(app, key_func=get_remote_address)
+# initialize the rate limiter
+limiter = Limiter(key_func=get_remote_address)
+
+# bind the limiter to the app
+limiter.init_app(app)
 
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -221,5 +225,5 @@ def contact():
         db.session.commit()
     return render_template("contact.html")
 
-
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001, debug=True)
