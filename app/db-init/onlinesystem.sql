@@ -9,7 +9,7 @@
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+00:00";
+-- SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -59,7 +59,7 @@ CREATE TABLE `contact` (
 CREATE TABLE `duty` (
   `id` int(100) NOT NULL,
   `ddate` varchar(10) NOT NULL,
-  `didno` varchar(10) NOT NULL,
+  `idno` varchar(10) NOT NULL,
   `stime` varchar(10) NOT NULL,
   `etime` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -71,12 +71,13 @@ CREATE TABLE `duty` (
 --
 
 CREATE TABLE `Manager` (
-  `id` int(100) NOT NULL,
+  `id` int(100) NOT NULL AUTO_INCREMENT, 
   `name` varchar(100) NOT NULL,
   `username` varchar(100) NOT NULL,
   `domain` varchar(100) NOT NULL,
   `idno` varchar(100) NOT NULL,
-  `pword` varchar(100) NOT NULL
+  `pword` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -109,8 +110,8 @@ CREATE TABLE `security` (
 --
 -- Indexes for table `Manager`
 --
-ALTER TABLE `Manager`
-  ADD PRIMARY KEY (`id`);
+-- ALTER TABLE `Manager`
+--   ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -119,8 +120,10 @@ ALTER TABLE `Manager`
 --
 -- AUTO_INCREMENT for table `Manager`
 --
-ALTER TABLE `Manager`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+-- ALTER TABLE `Manager`
+--   MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+ALTER TABLE `Manager` AUTO_INCREMENT = 3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

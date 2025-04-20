@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from flask_bcrypt import Bcrypt
-from flask import Flask, render_template, redirect, url_for, session, request
+from flask import Flask, render_template, redirect, url_for, session, request, g
 from flask_sqlalchemy import SQLAlchemy
 
 # --------import rate limiting library---------
@@ -24,6 +24,23 @@ limiter = Limiter(key_func=get_remote_address)
 # bind the limiter to the app
 limiter.init_app(app)
 
+# Global rate limiting
+@app.before_request
+@limiter.limit("1000 per minute")
+def global_limiter():
+    pass
+
+# Add rate limit headers to responses
+@app.after_request
+def add_rate_limit_headers(response):
+    try:
+        remaining = getattr(g, '_rate_limit_remaining', None)
+        if remaining is not None:
+            response.headers['X-RateLimit-Remaining'] = str(remaining)
+    except:
+        pass
+    return response
+
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), unique=False, nullable=False)
@@ -33,11 +50,11 @@ class Contact(db.Model):
 
 
 class Manager(db.Model):
-    id = db.Column(db.Integer, unique=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
     username = db.Column(db.String(120), unique=True, nullable=False)
     domain = db.Column(db.String(120), unique=False, nullable=False)
-    idno = db.Column(db.String(120), primary_key=True, nullable=False)
+    idno = db.Column(db.String(120), unique=True, nullable=False)
     pword = db.Column(db.String(500), unique=False, nullable=False)
 
 

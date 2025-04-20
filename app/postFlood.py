@@ -1,25 +1,74 @@
-import scapy.all as scapy
+import requests
 import time
+from datetime import datetime
+import sys
 
-target_ip = "127.0.0.1"
-target_port = 5000
+TARGET_URL = "http://127.0.0.1:5001/ManagerLogin"
+TOTAL_REQUESTS = 30  # Total number of requests to send
+REQUESTS_PER_BATCH = 10  # Number of requests to send in quick succession
+BATCH_DELAY = 2  # Seconds to wait between batches
 
 def post_flood():
-    payload = (
-        b"POST /ManagerLogin HTTP/1.1\r\n" # vulnerable route
-        b"Host: 127.0.0.1\r\n" # vulnerable host
-        b"Content-Type: application/x-www-form-urlencoded\r\n" # vulnerable content type
-        b"Content-Length: 100\r\n" # vulnerable content length
-        b"\r\n" # end of headers
-        b"username=admin&password=1234"
-    )
+    print(f"Starting DoS test against {TARGET_URL}")
+    print(f"Will send {TOTAL_REQUESTS} total requests in batches of {REQUESTS_PER_BATCH}")
+    print("-" * 50)
 
-    ip = scapy.IP(dst=target_ip)
-    tcp = scapy.TCP(sport=scapy.RandShort(), dport=target_port)
-    packet = ip / tcp / payload
+    success_count = 0
+    rate_limited_count = 0
+    other_error_count = 0
 
-    for i in range(30):
-        scapy.send(packet, verbose=False)
-        time.sleep(0.1) # send 30 packets every 0.1 seconds
-        print(f"Sent packet {i+1} to {target_ip}:{target_port}")
-post_flood()
+    for i in range(0, TOTAL_REQUESTS, REQUESTS_PER_BATCH):
+        print(f"\nStarting batch {(i//REQUESTS_PER_BATCH) + 1}...")
+        batch_start = datetime.now()
+
+        # Send a batch of requests quickly
+        for j in range(REQUESTS_PER_BATCH):
+            if i + j >= TOTAL_REQUESTS:
+                break
+
+            try:
+                response = requests.post(
+                    TARGET_URL,
+                    data={"username": "admin", "password": "1234"},
+                    timeout=2
+                )
+                
+                request_num = i + j + 1
+                timestamp = datetime.now().strftime("%H:%M:%S")
+
+                if response.status_code == 200:
+                    print(f"[{timestamp}] Request {request_num}: Success")
+                    success_count += 1
+                elif response.status_code == 429:  # Rate limit exceeded
+                    print(f"[{timestamp}] Request {request_num}: Rate Limited!")
+                    rate_limited_count += 1
+                else:
+                    print(f"[{timestamp}] Request {request_num}: Error {response.status_code}")
+                    other_error_count += 1
+
+            except requests.exceptions.RequestException as e:
+                print(f"Request {i + j + 1}: Failed - {str(e)}")
+                other_error_count += 1
+
+        batch_duration = (datetime.now() - batch_start).total_seconds()
+        print(f"Batch completed in {batch_duration:.2f} seconds")
+
+        # Wait between batches
+        if i + REQUESTS_PER_BATCH < TOTAL_REQUESTS:
+            print(f"Waiting {BATCH_DELAY} seconds before next batch...")
+            time.sleep(BATCH_DELAY)
+
+    print("\n" + "=" * 50)
+    print("Attack Summary:")
+    print(f"Total Requests: {TOTAL_REQUESTS}")
+    print(f"Successful: {success_count}")
+    print(f"Rate Limited: {rate_limited_count}")
+    print(f"Other Errors: {other_error_count}")
+    print("=" * 50)
+
+if __name__ == "__main__":
+    try:
+        post_flood()
+    except KeyboardInterrupt:
+        print("\nTest interrupted by user")
+        sys.exit(0)

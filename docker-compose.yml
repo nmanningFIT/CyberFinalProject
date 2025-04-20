@@ -9,12 +9,15 @@ services:
       - db
     environment:
       - FLASK_ENV=development
+      - FLASK_APP=main.py
       - MYSQL_HOST=db
       - MYSQL_USER=root
       - MYSQL_PASSWORD=example
       - MYSQL_DB=onlinesystem
     volumes:
       - ./app:/app
+    working_dir: /app
+    command: flask run --host=0.0.0.0 --port=5001
 
   db:
     image: mysql:8.0
@@ -25,4 +28,5 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./db-init:/docker-entrypoint-initdb.d
+      # - ./db-init:/docker-entrypoint-initdb.d
+      - ./app/db-init/onlinesystem.sql:/docker-entrypoint-initdb.d/onlinesystem.sql
