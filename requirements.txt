@@ -4,3 +4,4 @@ flask_bcrypt
 pymysql
 flask-limiter
 cryptography
+requests
