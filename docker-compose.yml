@@ -4,7 +4,10 @@ services:
     ports:
       - "5001:5001"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      db_init:
+        condition: service_completed_successfully
     environment:
       - FLASK_ENV=development
       - FLASK_APP=main.py
@@ -22,7 +25,10 @@ services:
     ports:
       - "5002:5002"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      db_init:
+        condition: service_completed_successfully
     environment:
       - FLASK_ENV=development
       - FLASK_APP=main_no_ratelimit.py
@@ -44,5 +50,23 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      # - ./db-init:/docker-entrypoint-initdb.d
-      - ./app/db-init/onlinesystem.sql:/docker-entrypoint-initdb.d/onlinesystem.sql
+      - mysql_data:/var/lib/mysql
+      - ./app/db-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pexample"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  db_init:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    command: python db-init/init_admin.py
+
+volumes:
+  mysql_data:

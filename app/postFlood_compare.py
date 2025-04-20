@@ -7,8 +7,8 @@ import sys
 def send_request(url, request_num, batch_num):
     try:
         response = requests.post(url, data={
-            'username': 'ABC',
-            'pword': '00000'
+            'username': 'admin',
+            'pword': 'admin123'
         })
         
         if response.status_code == 429:  # Rate limit exceeded
