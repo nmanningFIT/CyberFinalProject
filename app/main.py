@@ -42,6 +42,8 @@ def add_rate_limit_headers(response):
     return response
 
 class Contact(db.Model):
+    __tablename__ = 'Contact'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), unique=False, nullable=False)
     email = db.Column(db.String(20), unique=False, nullable=False)
@@ -61,6 +63,8 @@ class Manager(db.Model):
 
 
 class Security(db.Model):
+    __tablename__ = 'Security'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
     username = db.Column(db.String(120), unique=True, nullable=False)
@@ -70,21 +74,25 @@ class Security(db.Model):
 
 
 class Absence(db.Model):
+    __tablename__ = 'Absence'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     idno = db.Column(db.String(120), unique=True, nullable=False)
-    sdate = db.Column(db.String, unique=False, nullable=False)
-    edate = db.Column(db.String, unique=False, nullable=False)
+    sdate = db.Column(db.String(120), unique=False, nullable=False)
+    edate = db.Column(db.String(120), unique=False, nullable=False)
     reason = db.Column(db.String(120), unique=False, nullable=False)
     status = db.Column(db.String(120), unique=False, nullable=False)
     timestamp = db.Column(db.String(120), unique=False, nullable=False)
 
 
 class Duty(db.Model):
+    __tablename__ = 'Duty'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
-    ddate = db.Column(db.String, unique=False, nullable=False)
+    ddate = db.Column(db.String(120), unique=False, nullable=False)
     didno = db.Column(db.String(120), unique=True, nullable=False)
-    stime = db.Column(db.String, unique=False, nullable=False)
-    etime = db.Column(db.String, unique=False, nullable=False)
+    stime = db.Column(db.String(120), unique=False, nullable=False)
+    etime = db.Column(db.String(120), unique=False, nullable=False)
 
 
 @app.route("/")
@@ -102,41 +110,57 @@ def index():
 def managerLogin():
     if request.method == "GET":
         return render_template("ManagerLogin.html")
-    else:
-        try:
-            username = request.form.get("username")
-            pword = request.form.get("pword")
-            print(f"Attempting to find manager with username: {username}")
-            data = Manager.query.filter_by(username=username).first()
-            print(f"Query result: {data}")
-        except Exception as e:
-            print(f"Database error: {str(e)}")
-            return f"Database error: {str(e)}", 500
-
-        if (data is not None) & (bcrypt.check_password_hash(data.pword, pword) == True):
+    
+    username = request.form.get("username")
+    pword = request.form.get("pword")
+    
+    if not username or not pword:
+        return "Username and password are required", 400
+    
+    try:
+        print(f"[DEBUG] Login attempt - username: {username}, password length: {len(pword)}")
+        data = Manager.query.filter_by(username=username).first()
+        
+        if not data:
+            print(f"[DEBUG] No user found with username: {username}")
+            return render_template("ManagerLogin.html", error="Invalid username or password")
+        
+        print(f"[DEBUG] Found user: {data.username}, stored password: {data.pword}")
+        
+        # Check if password is already hashed (starts with $2b$)
+        if data.pword.startswith('$2b$'):
+            print("[DEBUG] Using bcrypt verification")
+            is_valid = bcrypt.check_password_hash(data.pword, pword)
+        else:
+            print("[DEBUG] Using direct comparison")
+            is_valid = (data.pword == pword)
+            
+        print(f"[DEBUG] Password valid: {is_valid}")
+            
+        if is_valid:
+            app.logger.info(f"Successful login for user: {username}")
             session["logged_in"] = True
-            security = (
-                Security.query.filter_by(domain="Security")
-                .order_by(Security.name)
-                .all()
-            )
-            abes = (
-                Absence.query.filter_by(status="Pending")
-                .order_by(Absence.timestamp)
-                .all()
-            )
+            session["username"] = username
+            
+            # Fetch required data for dashboard
+            security = Security.query.filter_by(domain="Security").order_by(Security.name).all()
+            abes = Absence.query.filter_by(status="Pending").order_by(Absence.timestamp).all()
             duty = Duty.query.order_by(Duty.ddate).all()
+            
             return render_template(
                 "managerdash.html",
                 security=security,
                 abes=abes,
                 username=data.username,
-                duty=duty,
+                duty=duty
             )
-
         else:
-            print("dont login 1")
-            return "Dont Login"
+            app.logger.warning(f"Invalid password for user: {username}")
+            return render_template("ManagerLogin.html", error="Invalid username or password")
+            
+    except Exception as e:
+        app.logger.error(f"Database error during login: {str(e)}")
+        return render_template("ManagerLogin.html", error="An error occurred. Please try again later.")
 
 
 @app.route("/SecurityLogin", methods=["GET", "POST"])
@@ -167,6 +191,43 @@ def securityLogin():
 def logout():
     session.pop("username", None)
     return redirect(url_for("index"))
+
+
+@app.route("/ManagerRegister", methods=["GET", "POST"])
+def managerRegister():
+    if request.method == "GET":
+        return render_template("ManagerRegister.html")
+    else:
+        name = request.form.get("name")
+        username = request.form.get("username")
+        domain = "Manager"
+        idno = request.form.get("idno")
+        pword = request.form.get("pword")
+        
+        # Check if username already exists
+        existing_user = Manager.query.filter_by(username=username).first()
+        if existing_user:
+            return "Username already exists", 400
+            
+        # Hash the password
+        hashed_password = bcrypt.generate_password_hash(pword).decode('utf-8')
+        
+        # Create new manager
+        manager = Manager(
+            name=name,
+            username=username,
+            domain=domain,
+            idno=idno,
+            pword=hashed_password
+        )
+        
+        try:
+            db.session.add(manager)
+            db.session.commit()
+            return redirect(url_for('managerLogin'))
+        except Exception as e:
+            db.session.rollback()
+            return f"Registration failed: {str(e)}", 500
 
 
 @app.route("/createduty", methods=["GET", "POST"])

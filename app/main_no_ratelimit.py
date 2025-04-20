@@ -125,6 +125,43 @@ def logout():
     return redirect(url_for("index"))
 
 
+@app.route("/ManagerRegister", methods=["GET", "POST"])
+def managerRegister():
+    if request.method == "GET":
+        return render_template("ManagerRegister.html")
+    else:
+        name = request.form.get("name")
+        username = request.form.get("username")
+        domain = "Manager"
+        idno = request.form.get("idno")
+        pword = request.form.get("pword")
+        
+        # Check if username already exists
+        existing_user = Manager.query.filter_by(username=username).first()
+        if existing_user:
+            return "Username already exists", 400
+            
+        # Hash the password
+        hashed_password = bcrypt.generate_password_hash(pword).decode('utf-8')
+        
+        # Create new manager
+        manager = Manager(
+            name=name,
+            username=username,
+            domain=domain,
+            idno=idno,
+            pword=hashed_password
+        )
+        
+        try:
+            db.session.add(manager)
+            db.session.commit()
+            return redirect(url_for('managerLogin'))
+        except Exception as e:
+            db.session.rollback()
+            return f"Registration failed: {str(e)}", 500
+
+
 @app.route("/createduty", methods=["GET", "POST"])
 def createduty():
     if request.method == "GET":
