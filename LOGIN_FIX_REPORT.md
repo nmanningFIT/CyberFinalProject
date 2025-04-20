@@ -3,10 +3,10 @@ Date: April 20, 2025
 
 ## Issue Summary
 The login system was failing due to several database-related issues:
-1. Inconsistent table naming (case sensitivity)
-2. Missing required tables
-3. Duplicate table definitions
-4. Inconsistent column types
+1. Missing required tables (Security, Duty)
+2. Inconsistent table naming (case sensitivity)
+3. Mismatched column names between models and database
+4. Inconsistent column types and lengths
 
 ## Fixes Applied
 
