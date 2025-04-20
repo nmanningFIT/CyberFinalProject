@@ -1,2 +1,12 @@
-report.md
+# Python
+__pycache__/
+*.py[cod]
+*.class
 
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Current ignores
+report.md
