@@ -50,6 +50,8 @@ class Contact(db.Model):
 
 
 class Manager(db.Model):
+    __tablename__ = 'Manager'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
     username = db.Column(db.String(120), unique=True, nullable=False)
@@ -101,9 +103,15 @@ def managerLogin():
     if request.method == "GET":
         return render_template("ManagerLogin.html")
     else:
-        username = request.form.get("username")
-        pword = request.form.get("pword")
-        data = Manager.query.filter_by(username=username).first()
+        try:
+            username = request.form.get("username")
+            pword = request.form.get("pword")
+            print(f"Attempting to find manager with username: {username}")
+            data = Manager.query.filter_by(username=username).first()
+            print(f"Query result: {data}")
+        except Exception as e:
+            print(f"Database error: {str(e)}")
+            return f"Database error: {str(e)}", 500
 
         if (data is not None) & (bcrypt.check_password_hash(data.pword, pword) == True):
             session["logged_in"] = True
