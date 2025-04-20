@@ -13,6 +13,8 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
 class Contact(db.Model):
+    __tablename__ = 'Contact'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), unique=False, nullable=False)
     email = db.Column(db.String(20), unique=False, nullable=False)
@@ -22,6 +24,7 @@ class Contact(db.Model):
 
 class Manager(db.Model):
     __tablename__ = 'Manager'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
     username = db.Column(db.String(120), unique=True, nullable=False)
@@ -31,15 +34,19 @@ class Manager(db.Model):
 
 
 class Security(db.Model):
+    __tablename__ = 'Security'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
     username = db.Column(db.String(120), unique=True, nullable=False)
     domain = db.Column(db.String(120), unique=False, nullable=False)
     idno = db.Column(db.String(120), primary_key=True, nullable=False)
-    pword = db.Column(db.String(120), unique=False, nullable=False)
+    pword = db.Column(db.String(500), unique=False, nullable=False)
 
 
 class Absence(db.Model):
+    __tablename__ = 'Absence'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     idno = db.Column(db.String(120), unique=True, nullable=False)
     sdate = db.Column(db.String, unique=False, nullable=False)
@@ -50,9 +57,11 @@ class Absence(db.Model):
 
 
 class Duty(db.Model):
+    __tablename__ = 'Duty'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     ddate = db.Column(db.String, unique=False, nullable=False)
-    didno = db.Column(db.String(120), unique=True, nullable=False)
+    idno = db.Column(db.String(120), unique=False, nullable=False)
     stime = db.Column(db.String, unique=False, nullable=False)
     etime = db.Column(db.String, unique=False, nullable=False)
 
@@ -76,7 +85,7 @@ def managerLogin():
         pword = request.form.get("pword")
         data = Manager.query.filter_by(username=username).first()
 
-        if (data is not None) & (bcrypt.check_password_hash(data.pword, pword) == True):
+        if data is not None and bcrypt.check_password_hash(data.pword, pword):
             session["logged_in"] = True
             security = (
                 Security.query.filter_by(domain="Security")
@@ -228,6 +237,10 @@ def contact():
         db.session.commit()
         return redirect(url_for("index"))
 
+
+with app.app_context():
+    # Create all database tables
+    db.create_all()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5002, debug=True)

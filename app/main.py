@@ -90,7 +90,7 @@ class Duty(db.Model):
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     ddate = db.Column(db.String(120), unique=False, nullable=False)
-    didno = db.Column(db.String(120), unique=True, nullable=False)
+    idno = db.Column(db.String(120), unique=False, nullable=False)
     stime = db.Column(db.String(120), unique=False, nullable=False)
     etime = db.Column(db.String(120), unique=False, nullable=False)
 
