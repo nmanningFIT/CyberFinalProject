@@ -4,9 +4,9 @@
 
 This repository is a modular, Dockerized Flask web application designed as a collaborative platform for implementing, testing, and demonstrating cybersecurity controls. The project is structured to support multiple user roles (Employee, Manager, Admin) and is fully containerized for easy setup and consistent development environments.
 
-**Current Focus: Integrity-based Security Patch**
+**Current Focus: Availability-based Security Patch**
 
-As currently implemented, this repository showcases an exploration of **integrity-based security controls**. In particular, it demonstrates the use of **rate limiting** to protect the application against Denial-of-Service (DoS) attacks. Two versions of the application are provided:
+As currently implemented, this repository showcases an exploration of **availability-based security controls**. In particular, it demonstrates the use of **rate limiting** to protect the application against Denial-of-Service (DoS) attacks. Two versions of the application are provided:
 
 - **With Rate Limiting:** Demonstrates how integrity controls can mitigate DoS attacks and maintain reliable service.
 - **Without Rate Limiting:** Serves as a baseline for comparison and experimentation.
