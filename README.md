@@ -8,7 +8,7 @@ This repository is a modular, Dockerized Flask web application designed as a col
 
 As currently implemented, this repository showcases an exploration of **availability-based security controls**. In particular, it demonstrates the use of **rate limiting** to protect the application against Denial-of-Service (DoS) attacks. Two versions of the application are provided:
 
-- **With Rate Limiting:** Demonstrates how integrity controls can mitigate DoS attacks and maintain reliable service.
+- **With Rate Limiting:** Demonstrates how availability controls can mitigate DoS attacks and maintain reliable service.
 - **Without Rate Limiting:** Serves as a baseline for comparison and experimentation.
 
 **Key Features:**
@@ -18,6 +18,8 @@ As currently implemented, this repository showcases an exploration of **availabi
 - **Security Experimentation Platform:** Easily extendable for further patches and security enhancements.
 
 ---
+
+> **Note:** Rate limiting is an availability control that helps protect the system from denial-of-service (DoS) attacks by limiting the number of requests a user can make in a given time period.
 
 ## 🚀 Quick Start
 
@@ -67,6 +69,7 @@ As you continue developing, use this platform to implement and test additional s
 
 - **Confidentiality:** (e.g., encryption, secure sessions, access controls)
 - **Integrity:** (e.g., hashing, validation, audit logging)
+- **Availability:** (e.g., redundancy, failover mechanisms)
 - **Authentication:** (e.g., MFA, password policies, external identity providers)
 
 Each teammate should create a new branch for their patch, document their changes, and submit a pull request for review.
@@ -120,5 +123,5 @@ docker-compose up -d
 ## 📝 Notes
 
 - Each teammate’s database is private and local.
-- This repository currently demonstrates integrity protections via rate limiting. Use it as a foundation for your own cybersecurity enhancements!
+- This repository currently demonstrates availability protections via rate limiting. Use it as a foundation for your own cybersecurity enhancements!
 - If you have issues, check container logs or ask in the team chat!
