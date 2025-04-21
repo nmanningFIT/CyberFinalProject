@@ -1,6 +1,7 @@
 services:
   flaskapp_with_ratelimit:
-    build: .
+    # build: .
+    image: michaelwayne/cyb5272-flaskapp-ratelmit:latest
     ports:
       - "5001:5001"
     depends_on:
@@ -21,7 +22,8 @@ services:
     command: flask run --host=0.0.0.0 --port=5001
 
   flaskapp_no_ratelimit:
-    build: .
+    # build: .
+    image: michaelwayne/cyb5272-flaskapp-no-ratelimit:latest
     ports:
       - "5002:5002"
     depends_on:
@@ -59,7 +61,8 @@ services:
       retries: 5
 
   db_init:
-    build: .
+    # build: .
+    image: michaelwayne/cyb5272-db-init:latest
     depends_on:
       db:
         condition: service_healthy
