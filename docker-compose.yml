@@ -1,7 +1,12 @@
 services:
   flaskapp_with_ratelimit:
-    # build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - FLASK_APP=main.py
     image: michaelwayne/cyb5272-flaskapp-ratelmit:latest
+
     ports:
       - "5001:5001"
     depends_on:
@@ -22,8 +27,13 @@ services:
     command: flask run --host=0.0.0.0 --port=5001
 
   flaskapp_no_ratelimit:
-    # build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - FLASK_APP=main_no_ratelimit.py
     image: michaelwayne/cyb5272-flaskapp-no-ratelimit:latest
+
     ports:
       - "5002:5002"
     depends_on:
@@ -45,6 +55,7 @@ services:
 
   db:
     image: mysql:8.0
+
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
@@ -56,13 +67,17 @@ services:
       - ./app/db-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pexample"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      interval: 2s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
 
   db_init:
-    # build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: michaelwayne/cyb5272-db-init:latest
+
     depends_on:
       db:
         condition: service_healthy
