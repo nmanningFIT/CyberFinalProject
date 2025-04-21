@@ -1,6 +1,6 @@
 # 🐳 Docker-Based Setup & Usage
 
-## 📖 Extended Project Description
+## 📖 Project Description
 
 This repository is a modular, Dockerized Flask web application designed as a collaborative platform for implementing, testing, and demonstrating cybersecurity controls. The project is structured to support multiple user roles (Employee, Manager, Admin) and is fully containerized for easy setup and consistent development environments.
 
