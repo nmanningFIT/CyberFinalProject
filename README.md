@@ -43,6 +43,7 @@ This will start:
 ### 4. **Access the Application**
 
 - Web Application: [http://localhost:5050](http://localhost:5050)
+- Database: localhost:3307
 
 **Default credentials:**
 - Username: `ABC`

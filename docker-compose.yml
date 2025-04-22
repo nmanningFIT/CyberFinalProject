@@ -34,7 +34,7 @@ services:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: onlinesystem
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./app/db-init:/docker-entrypoint-initdb.d
