@@ -20,11 +20,12 @@ def wait_for_db(max_retries=30, delay_seconds=2):
     retry_count = 0
     while retry_count < max_retries:
         try:
-            # Try to connect to the database
-            db.engine.connect()
-            print("Successfully connected to the database")
-            return True
-        except OperationalError as e:
+            with app.app_context():
+                # Try to connect to the database
+                db.engine.connect()
+                print("Successfully connected to the database")
+                return True
+        except Exception as e:
             retry_count += 1
             if retry_count == max_retries:
                 print(f"Failed to connect to database after {max_retries} attempts")
