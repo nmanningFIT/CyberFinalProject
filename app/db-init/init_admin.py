@@ -44,6 +44,41 @@ class Manager(db.Model):
     idno = db.Column(db.String(120), unique=True, nullable=False)
     pword = db.Column(db.String(500), unique=False, nullable=False)
 
+class Security(db.Model):
+    __tablename__ = 'Security'
+    id = db.Column(db.Integer, unique=True)
+    name = db.Column(db.String(120), nullable=False)
+    username = db.Column(db.String(120), unique=True, nullable=False)
+    domain = db.Column(db.String(120), nullable=False)
+    idno = db.Column(db.String(120), primary_key=True, nullable=False)
+    pword = db.Column(db.String(120), nullable=False)
+
+class Duty(db.Model):
+    __tablename__ = 'Duty'
+    id = db.Column(db.Integer, primary_key=True)
+    ddate = db.Column(db.String(120), nullable=False)
+    idno = db.Column(db.String(120), nullable=False)
+    stime = db.Column(db.String(120), nullable=False)
+    etime = db.Column(db.String(120), nullable=False)
+
+class Absence(db.Model):
+    __tablename__ = 'Absence'
+    id = db.Column(db.Integer, primary_key=True)
+    idno = db.Column(db.String(120), unique=True, nullable=False)
+    sdate = db.Column(db.String(120), nullable=False)
+    edate = db.Column(db.String(120), nullable=False)
+    reason = db.Column(db.String(120), nullable=False)
+    status = db.Column(db.String(120), nullable=False)
+    timestamp = db.Column(db.String(120), nullable=False)
+
+class Contact(db.Model):
+    __tablename__ = 'Contact'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(20), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    msg = db.Column(db.String(120), nullable=False)
+
 def init_admin():
     if not wait_for_db():
         print("Could not connect to database")
@@ -51,27 +86,38 @@ def init_admin():
 
     try:
         with app.app_context():
-            # Create tables
+            # Create all tables
             db.create_all()
-            
-            # Check if admin exists
-            admin = Manager.query.filter_by(username='admin').first()
-            if not admin:
-                # Create admin user with hashed password
-                hashed_password = bcrypt.generate_password_hash('admin123').decode('utf-8')
-                admin = Manager(
-                    name='Admin',
-                    username='admin',
-                    domain='Manager',
-                    idno='MGR001',
+
+            # Check if default manager exists
+            manager = Manager.query.filter_by(username="ABC").first()
+            if manager is None:
+                # Create default manager
+                hashed_password = bcrypt.generate_password_hash("00000").decode('utf-8')
+                manager = Manager(
+                    name="ABC",
+                    username="ABC",
+                    domain="Manager",
+                    idno="00000",
                     pword=hashed_password
                 )
-                db.session.add(admin)
+                db.session.add(manager)
+
+                # Create second manager (PK)
+                hashed_password = bcrypt.generate_password_hash("example").decode('utf-8')
+                manager2 = Manager(
+                    name="PK",
+                    username="prk@123",
+                    domain="Manager",
+                    idno="01236",
+                    pword=hashed_password
+                )
+                db.session.add(manager2)
                 db.session.commit()
-                print("Admin user created successfully")
+                print("Default managers created successfully")
                 sys.exit(0)
             else:
-                print("Admin user already exists")
+                print("Default managers already exist")
                 sys.exit(0)
     except Exception as e:
         print(f"Error during database initialization: {str(e)}")
