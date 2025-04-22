@@ -106,7 +106,24 @@ git checkout -b feature/[cia-aspect]-improvements
   docker-compose up -d
   ```
 
+### Database Access
+- Connect to MySQL shell:
+  ```bash
+  docker exec -it cyb5272-case-study-db-1 mysql -u root -pexample onlinesystem
+  ```
+- Common MySQL commands:
+  ```sql
+  -- List all tables
+  SHOW TABLES;
+  
+  -- View table structure
+  DESCRIBE users;
+  
+  -- Query data
+  SELECT * FROM users;
+  ```
+
 ## 📝 Notes
 - Each developer's database is private and local
 - Check container logs for troubleshooting
-- See DockerREADME.md for detailed setup information
+- Run `docker-compose logs -f` to see real-time container output
