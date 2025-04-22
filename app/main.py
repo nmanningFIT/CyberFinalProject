@@ -134,7 +134,6 @@ def managerLogin():
 
 
 @app.route("/SecurityLogin", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
 def securityLogin():
     if request.method == "GET":
         return render_template("SecurityLogin.html")
