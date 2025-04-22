@@ -37,12 +37,12 @@ docker-compose up -d
 
 This will start:
 - MySQL database (with your own local data)
-- Flask application (port 5000)
+- Flask application (port 5050)
 - Database initialization service
 
 ### 4. **Access the Application**
 
-- Web Application: [http://localhost:5000](http://localhost:5000)
+- Web Application: [http://localhost:5050](http://localhost:5050)
 
 **Default credentials:**
 - Username: `ABC`
