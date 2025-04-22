@@ -77,7 +77,6 @@ def index():
 
 
 @app.route("/ManagerLogin", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
 def managerLogin():
     if request.method == "GET":
         return render_template("ManagerLogin.html")
