@@ -1,127 +1,112 @@
-# 🐳 Docker-Based Setup & Usage
+# 🔒 CYB5272 Final Project
 
 ## 📖 Project Description
 
-This repository is a modular, Dockerized Flask web application designed as a collaborative platform for implementing, testing, and demonstrating cybersecurity controls. The project is structured to support multiple user roles (Employee, Manager, Admin) and is fully containerized for easy setup and consistent development environments.
-
-**Current Focus: Availability-based Security Patch**
-
-As currently implemented, this repository showcases an exploration of **availability-based security controls**. In particular, it demonstrates the use of **rate limiting** to protect the application against Denial-of-Service (DoS) attacks. Two versions of the application are provided:
-
-- **With Rate Limiting:** Demonstrates how availability controls can mitigate DoS attacks and maintain reliable service.
-- **Without Rate Limiting:** Serves as a baseline for comparison and experimentation.
+This repository contains a Flask-based web application with MySQL integration, designed as a collaborative platform for implementing and demonstrating the CIA (Confidentiality, Integrity, Availability) triad of information security. The project is structured to support multiple user roles and is fully containerized for easy setup and consistent development environments.
 
 **Key Features:**
-- **Multiple User Roles:** Employees, Managers, and Admins with distinct access levels.
-- **MySQL Database:** All data is managed via a backend database, automatically initialized.
-- **Dockerized Environment:** Ensures all contributors have the same setup, eliminating environment-specific bugs.
-- **Security Experimentation Platform:** Easily extendable for further patches and security enhancements.
+- **Multiple User Roles:** Managers and Security personnel with distinct access levels
+- **MySQL Database:** All data is managed via a backend database, automatically initialized
+- **Dockerized Environment:** Ensures all contributors have the same setup
+- **Security Framework:** Ready for CIA triad security implementations
 
 ---
 
-> **Note:** Rate limiting is an availability control that helps protect the system from denial-of-service (DoS) attacks by limiting the number of requests a user can make in a given time period.
-
 ## 🚀 Quick Start
 
-### 1. **Clone the Repository**
+### 1. **Clone and Setup**
 
 ```bash
+# Clone the repository
 git clone https://github.com/nmanningFIT/CyberFinalProject.git
 cd CyberFinalProject
+
+# Switch to baseline branch
+git checkout main-baseline
 ```
 
 ### 2. **Install Docker & Docker Compose**
 
 - [Install Docker Desktop](https://www.docker.com/products/docker-desktop/) (includes Compose)
 
-### 3. **Pull the Prebuilt Images**
-
-```bash
-docker-compose pull
-```
-
-### 4. **Start the Application**
+### 3. **Start the Application**
 
 ```bash
 docker-compose up -d
 ```
 
-- This will start:
-  - MySQL database (with your own local data)
-  - Flask app with rate limiting (port 5001)
-  - Flask app without rate limiting (port 5002)
-  - Admin user is created automatically
+This will start:
+- MySQL database (with your own local data)
+- Flask application (port 5000)
+- Database initialization service
 
-### 5. **Access the Apps**
+### 4. **Access the Application**
 
-- **Rate-limited version:** [http://localhost:5001](http://localhost:5001)
-- **Non-rate-limited version:** [http://localhost:5002](http://localhost:5002)
+- Web Application: [http://localhost:5000](http://localhost:5000)
 
-**Default admin credentials:**
-- Username: `admin`
-- Password: `admin123`
+**Default credentials:**
+- Username: `ABC`
+- Password: `00000`
 
 ---
 
-### 🔐 Next Steps for the Team
+## 🔐 Team Development
 
-As you continue developing, use this platform to implement and test additional security patches related to:
+### CIA Triad Implementation
+Team members will each focus on one aspect of the CIA security triad:
 
-- **Confidentiality:** (e.g., encryption, secure sessions, access controls)
-- **Integrity:** (e.g., hashing, validation, audit logging)
-- **Availability:** (e.g., redundancy, failover mechanisms)
-- **Authentication:** (e.g., MFA, password policies, external identity providers)
+1. **Confidentiality**
+   - Secure data transmission
+   - Access control implementation
+   - Session management
+   - Data encryption
 
-Each teammate should create a new branch for their patch, document their changes, and submit a pull request for review.
+2. **Integrity**
+   - Input validation
+   - Data verification
+   - Audit logging
+   - Error handling
 
----
+3. **Availability**
+   - Rate limiting
+   - Load balancing
+   - Failover mechanisms
+   - Error recovery
 
-## 🧪 Testing
-
-To run the DoS comparison test (optional):
-
+### Development Workflow
+1. Create your feature branch:
 ```bash
-cd app
-python3 postFlood_compare.py
+git checkout -b feature/[cia-aspect]-improvements
+# Example: git checkout -b feature/confidentiality-improvements
 ```
 
----
-
-## 🔄 Resetting Your Database
-
-If you want to start fresh (wipe all data):
-
-```bash
-docker-compose down -v
-docker-compose up -d
-```
+2. Make and test your changes
+3. Submit a pull request for review
 
 ---
 
-## 🛠️ Making Code Changes
+## 🛠️ Development Tips
 
-- All source code is mounted into the containers.
-- Edit code in your local editor; changes apply instantly (Flask debug mode is on).
-- If you change dependencies, rebuild with:
+### Making Changes
+- All source code is mounted into containers
+- Changes apply instantly (Flask debug mode is on)
+- Rebuild if dependencies change:
   ```bash
   docker-compose up --build -d
   ```
 
----
-
-## 🐳 Useful Docker Commands
-
-- View logs:  
-  `docker-compose logs -f`
-- Stop everything:  
-  `docker-compose down`
-- Stop & remove all data:  
-  `docker-compose down -v`
-
----
+### Useful Commands
+- View logs:
+  ```bash
+  docker-compose logs -f
+  ```
+- Reset database:
+  ```bash
+  docker-compose down -v
+  docker-compose up -d
+  ```
 
 ## 📝 Notes
-
-- Each teammate’s database is private and local.
-- This repository currently demonstrates availability protections via rate limiting. Use it as a foundation for your own cybersecurity enhancements!
-- If you have issues, check container logs or ask in the team chat!
+- Each developer's database is private and local
+- Check container logs for troubleshooting
+- See DockerREADME.md for detailed setup information
