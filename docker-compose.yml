@@ -1,14 +1,14 @@
 services:
-  flaskapp_with_ratelimit:
+  flaskapp:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - FLASK_APP=main.py
-    image: michaelwayne/cyb5272-flaskapp-ratelmit:latest
+    image: michaelwayne/cyb5272-flaskapp:latest
 
     ports:
-      - "5001:5001"
+      - "5000:5000"
     depends_on:
       db:
         condition: service_healthy
@@ -24,34 +24,7 @@ services:
     volumes:
       - ./app:/app
     working_dir: /app
-    command: flask run --host=0.0.0.0 --port=5001
-
-  flaskapp_no_ratelimit:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - FLASK_APP=main_no_ratelimit.py
-    image: michaelwayne/cyb5272-flaskapp-no-ratelimit:latest
-
-    ports:
-      - "5002:5002"
-    depends_on:
-      db:
-        condition: service_healthy
-      db_init:
-        condition: service_completed_successfully
-    environment:
-      - FLASK_ENV=development
-      - FLASK_APP=main_no_ratelimit.py
-      - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=example
-      - MYSQL_DB=onlinesystem
-    volumes:
-      - ./app:/app
-    working_dir: /app
-    command: flask run --host=0.0.0.0 --port=5002
+    command: flask run --host=0.0.0.0 --port=5000
 
   db:
     image: mysql:8.0
