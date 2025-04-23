@@ -1,5 +1,6 @@
 
-# 🔒 CYB5272 Final Project
+# 🔒 CYB5272 Final Project- Input Validation
+### By: Nicholas Manning
 
 ## What is input validation?
 Input validation is a part of Integrity in the CIA triad. It is used to ensure that the data entering a system meets the formatting requirements. Malicious actors can attack sites by SQL injection and XSS.
@@ -73,7 +74,14 @@ Input validation is a part of Integrity in the CIA triad. It is used to ensure t
 
 # How to mitigate risk
 
+## Data Sanitation
+### Filter the input that is directly coming into the fields. This may include special characters, numbers, etc. 
 
+## Set appropriate response haders in the HTML
+### Try uisng the "content-type" or the "X-Content-Type-Options" parameters to assess the type of incoming data
+
+## Set security policies
+### Some frameworks have built in anti-XSS measures, just like the flask framework used in this assessment.
 
 
 
