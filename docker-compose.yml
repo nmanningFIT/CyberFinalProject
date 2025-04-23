@@ -16,7 +16,7 @@ services:
         condition: service_completed_successfully
     environment:
       - FLASK_ENV=development
-      - FLASK_APP=main.py
+      - FLASK_APP=secure.py
       - MYSQL_HOST=db
       - MYSQL_USER=root
       - MYSQL_PASSWORD=example
