@@ -103,16 +103,17 @@ def init_admin():
                 )
                 db.session.add(manager)
 
-                # Create second manager (PK)
-                hashed_password = bcrypt.generate_password_hash("example").decode('utf-8')
-                manager2 = Manager(
-                    name="PK",
-                    username="prk@123",
-                    domain="Manager",
-                    idno="01236",
+                hashed_password = bcrypt.generate_password_hash(
+                    "00000").decode('utf-8')
+                security = Security(
+                    name="ABC",
+                    username="ABC",
+                    domain="Security",
+                    idno="99999",
                     pword=hashed_password
                 )
-                db.session.add(manager2)
+                db.session.add(security)
+
                 db.session.commit()
                 print("Default managers created successfully")
                 sys.exit(0)

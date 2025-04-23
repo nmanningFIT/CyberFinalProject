@@ -1,0 +1,72 @@
+services:
+  flaskapp_with_ratelimit:
+    build: .
+    ports:
+      - "5001:5001"
+    depends_on:
+      db:
+        condition: service_healthy
+      db_init:
+        condition: service_completed_successfully
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=main.py
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=example
+      - MYSQL_DB=onlinesystem
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    command: flask run --host=0.0.0.0 --port=5001
+
+  flaskapp_no_ratelimit:
+    build: .
+    ports:
+      - "5002:5002"
+    depends_on:
+      db:
+        condition: service_healthy
+      db_init:
+        condition: service_completed_successfully
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=main_no_ratelimit.py
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=example
+      - MYSQL_DB=onlinesystem
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    command: flask run --host=0.0.0.0 --port=5002
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: onlinesystem
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./app/db-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pexample"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  db_init:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    command: python db-init/init_admin.py
+
+volumes:
+  mysql_data:
