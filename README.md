@@ -38,14 +38,27 @@ Password: fishing is fun
 ---
 ## How to attack the vulnerability using an XXS attack
 - Assessing the security risks involved with XSS attacks by malicious code injection
+  
+![Taking input](ImagesCYB/SecurityPersonLogin.png)
+
 
 - Testing script input
 
+  
+![Taking input](ImagesCYB/ManagerLoginWithScript.png)
+
+
 - Analyzing the result
+
+  
+![Taking input](ImagesCYB/F12Protected.png)
+
 
 - Result:
          The flask framework has built in reflection parameters to block potential XSS attacks. When inserting the script into the input window, the site does not reflect this in
          devtools menu.
+
+![Taking input](ImagesCYB/ExampleWorking.png)
 
 ---
 ## Example of a vulnerable site being attacked using XSS
