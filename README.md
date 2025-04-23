@@ -26,10 +26,10 @@ Input validation is a part of Integrity in the CIA triad. It is used to ensure t
 ## Database assessment from the website's sql database
 
 ### Example of creating a new manager
-Name: Nicholas
-Username: NMFIT
-Identity #: 60125
-Password: fishing is fun
+- Name: Nicholas
+- Username: NMFIT
+- Identity #: 60125
+- Password: fishing is fun
 
 ### Here you can see both the manager and security login databases saving input. The query is not protected directly from invalid input. The data is still encrypted when accepted though
 ![Taking input](ImagesCYB/takenInput.png)
