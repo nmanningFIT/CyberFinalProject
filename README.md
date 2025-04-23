@@ -25,6 +25,34 @@ Input validation is a part of Integrity in the CIA triad. It is used to ensure t
 ---
 ##Database assessment from the website's sql database
 
+### Example of creating a new manager
+Name: Nicholas
+Username: NMFIT
+Identity #: 60125
+Password: fishing is fun
+
+### Here you can see both the manager and security login databases saving input. The query is not protected directly from invalid input. The data is still encrypted when accepted though
+
+---
+##How to attack the vulnerability using an XXS attack
+- Assessing the security risks involved with XSS attacks by malicious code injection
+
+- Testing script input
+
+- Analyzing the result
+
+- Result:
+         The flask framework has built in reflection parameters to block potential XSS attacks. When inserting the script into the input window, the site does not reflect this in
+         devtools menu.
+
+---
+## Example of a vulnerable site being attacked using XSS
+
+---
+
+#How to mitigate risk
+
+
 
 
 
