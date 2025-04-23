@@ -23,7 +23,7 @@ Input validation is a part of Integrity in the CIA triad. It is used to ensure t
 - Assess if the query in Sql prompts for raw user input
 
 ---
-##Database assessment from the website's sql database
+## Database assessment from the website's sql database
 
 ### Example of creating a new manager
 Name: Nicholas
@@ -34,7 +34,7 @@ Password: fishing is fun
 ### Here you can see both the manager and security login databases saving input. The query is not protected directly from invalid input. The data is still encrypted when accepted though
 
 ---
-##How to attack the vulnerability using an XXS attack
+## How to attack the vulnerability using an XXS attack
 - Assessing the security risks involved with XSS attacks by malicious code injection
 
 - Testing script input
@@ -50,7 +50,7 @@ Password: fishing is fun
 
 ---
 
-#How to mitigate risk
+# How to mitigate risk
 
 
 
