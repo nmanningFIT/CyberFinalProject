@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>XSS Test</title>
+</head>
+<body>
+  <h2>Enter your input here</h2>
+  <h2>Test to see if the simple XSS script is reflected by the site</h2>
+  <form method="GET">
+    <input type="text" name="name">
+    <input type="submit">
+  </form>
+
+  <p>If the script works, then you should see the URL change. Observe using F12 as well. 
+    <span id="output">
+      <script>
+        // This is where the script insertion is not reflected
+        const params = new URLSearchParams(window.location.search);
+        document.write(params.get("name"));
+      </script>
+    </span>
+  </p>
+</body>
+</html>

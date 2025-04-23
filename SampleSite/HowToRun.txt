@@ -1,0 +1,4 @@
+1. Drag and drop the HTML file into the browser of choice
+2. Input --> <script>alert('Custom Message') </script>
+3. Click submit
+4. View the changes on the browser and using F12
