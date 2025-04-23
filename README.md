@@ -58,10 +58,16 @@ Password: fishing is fun
          The flask framework has built in reflection parameters to block potential XSS attacks. When inserting the script into the input window, the site does not reflect this in
          devtools menu.
 
-![Taking input](ImagesCYB/ExampleWorking.png)
-
 ---
 ## Example of a vulnerable site being attacked using XSS
+
+![Taking input](ImagesCYB/ExampleSite.PNG)
+
+![Taking input](ImagesCYB/withinput.PNG)
+
+![Taking input](ImagesCYB/AfterInput.PNG)
+
+![Taking input](ImagesCYB/ExampleWorking.png)
 
 ---
 
