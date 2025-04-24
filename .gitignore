@@ -10,3 +10,7 @@ __pycache__/
 
 # Current ignores
 report.md
+LOGIN_FIX_REPORT.md
+DB_CONNECTION_FIX.md
+attack_scripts/postFlood_compare.py
+attack_scripts/postFlood.py

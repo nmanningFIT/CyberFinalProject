@@ -1,6 +1,5 @@
-from datetime import date, datetime
 from flask_bcrypt import Bcrypt
-from flask import Flask, render_template, redirect, url_for, session, request, g
+from flask import Flask, render_template, redirect, url_for, session, request
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
 

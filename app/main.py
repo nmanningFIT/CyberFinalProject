@@ -1,19 +1,19 @@
-from datetime import date, datetime
+from datetime import datetime
 from flask_bcrypt import Bcrypt
-from flask import Flask, render_template, redirect, url_for, session, request, g
+from flask import Flask, render_template, redirect, url_for, session, request
 from flask_sqlalchemy import SQLAlchemy
 
 # --------import rate limiting library---------
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 #------------------------------------------------
+
 import pymysql
 
 pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
 app.secret_key = "super-secret-key"
-# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:@localhost/onlinesystem"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:example@db/onlinesystem'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
@@ -23,23 +23,6 @@ limiter = Limiter(key_func=get_remote_address)
 
 # bind the limiter to the app
 limiter.init_app(app)
-
-# Global rate limiting
-@app.before_request
-@limiter.limit("1000 per minute")
-def global_limiter():
-    pass
-
-# Add rate limit headers to responses
-@app.after_request
-def add_rate_limit_headers(response):
-    try:
-        remaining = getattr(g, '_rate_limit_remaining', None)
-        if remaining is not None:
-            response.headers['X-RateLimit-Remaining'] = str(remaining)
-    except:
-        pass
-    return response
 
 class Contact(db.Model):
     __tablename__ = 'Contact'
