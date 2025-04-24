@@ -88,34 +88,22 @@ def managerLogin():
         return "Username and password are required", 400
     
     try:
-        print(f"[DEBUG] Login attempt - username: {username}, password length: {len(pword)}")
-        data = Manager.query.filter_by(username=username).first()
+        # VULNERABLE: Using string formatting in raw SQL query
+        query = f"SELECT * FROM Manager WHERE username = '{username}' AND pword = '{pword}'"
+        result = db.engine.execute(query).fetchone()
         
-        if not data:
-            print(f"[DEBUG] No user found with username: {username}")
-            return render_template("ManagerLogin.html", error="Invalid username or password")
-        
-        print(f"[DEBUG] Found user: {data.username}, stored password: {data.pword}")
-        
-        # Check if password is already hashed (starts with $2b$)
-        if data.pword.startswith('$2b$'):
-            print("[DEBUG] Using bcrypt verification")
-            is_valid = bcrypt.check_password_hash(data.pword, pword)
-        else:
-            print("[DEBUG] Using direct comparison")
-            is_valid = (data.pword == pword)
-            
-        print(f"[DEBUG] Password valid: {is_valid}")
-            
-        if is_valid:
-            app.logger.info(f"Successful login for user: {username}")
+        if result:
             session["logged_in"] = True
-            session["username"] = username
+            session["username"] = result.username
             
-            # Fetch required data for dashboard
-            security = Security.query.filter_by(domain="Security").order_by(Security.name).all()
-            abes = Absence.query.filter_by(status="Pending").order_by(Absence.timestamp).all()
-            duty = Duty.query.order_by(Duty.ddate).all()
+            # Get security personnel data using raw SQL
+            security = db.engine.execute("SELECT * FROM Security").fetchall()
+            
+            # Get absence requests using raw SQL
+            abes = db.engine.execute("SELECT * FROM Absence").fetchall()
+            
+            # Get duty information using raw SQL
+            duty = db.engine.execute("SELECT * FROM Duty").fetchall()
             
             return render_template(
                 "managerdash.html",
