@@ -1,25 +1,32 @@
-# 🐳 Docker-Based Setup & Usage
+# 🚦 Branch: feature/availability-improvements
 
-## 📖 Project Description
+## 🔍 Branch-Specific Activities: Availability Improvements
 
-This repository is a modular, Dockerized Flask web application designed as a collaborative platform for implementing, testing, and demonstrating cybersecurity controls. The project is structured to support multiple user roles (Employee, Manager, Admin) and is fully containerized for easy setup and consistent development environments.
+This branch focuses on enhancing the application's **availability** by implementing and demonstrating security controls that protect against Denial-of-Service (DoS) attacks. The primary feature is the integration of **rate limiting** to ensure the platform remains accessible and resilient under high request loads.
 
-**Current Focus: Availability-based Security Patch**
+### What’s Unique in this Branch?
+- **Rate Limiting Middleware:** Application endpoints are protected by rate limiting to mitigate DoS attacks.
+- **Attack Simulation Scripts:** Includes scripts (e.g., `attack_scripts/rate_limit_test.py`) to test and demonstrate the effectiveness of availability controls.
+- **Comparison Modes:** Provides both rate-limited and non-rate-limited versions for experimental purposes.
+- **Exclusion of Sensitive/Test Files:** Certain files (e.g., `DB_CONNECTION_FIX.md`, `LOGIN_FIX_REPORT.md`, and specific attack scripts) are excluded from the repository and ignored in version control for security and clarity.
 
-As currently implemented, this repository showcases an exploration of **availability-based security controls**. In particular, it demonstrates the use of **rate limiting** to protect the application against Denial-of-Service (DoS) attacks. Two versions of the application are provided:
-
-- **With Rate Limiting:** Demonstrates how availability controls can mitigate DoS attacks and maintain reliable service.
-- **Without Rate Limiting:** Serves as a baseline for comparison and experimentation.
-
-**Key Features:**
-- **Multiple User Roles:** Employees, Managers, and Admins with distinct access levels.
-- **MySQL Database:** All data is managed via a backend database, automatically initialized.
-- **Dockerized Environment:** Ensures all contributors have the same setup, eliminating environment-specific bugs.
-- **Security Experimentation Platform:** Easily extendable for further patches and security enhancements.
+> This branch is intended for demonstration and experimentation with availability controls. For the stable, baseline version, refer to the `main-baseline` branch.
 
 ---
 
-> **Note:** Rate limiting is an availability control that helps protect the system from denial-of-service (DoS) attacks by limiting the number of requests a user can make in a given time period.
+## 🐳 Availability Improvements Branch
+
+This branch is dedicated exclusively to implementing and demonstrating **availability-focused security controls** for the application.
+
+### Key Activities in this Branch
+- **Rate Limiting:** Integration of rate limiting middleware to defend against Denial-of-Service (DoS) attacks and ensure the application remains accessible under load.
+- **Testing & Simulation:** Includes scripts (such as `attack_scripts/rate_limit_test.py`) to simulate attack scenarios and validate the effectiveness of availability controls.
+- **Comparison Modes:** Supports running the application with and without rate limiting for direct experimentation.
+- **Repository Hygiene:** Excludes sensitive/test files (e.g., `DB_CONNECTION_FIX.md`, `LOGIN_FIX_REPORT.md`, certain attack scripts) from version control for security and clarity.
+
+> This branch is focused solely on availability. For other security aspects, refer to the appropriate branches.
+
+---
 
 ## 🚀 Quick Start
 
@@ -63,26 +70,13 @@ docker-compose up -d
 
 ---
 
-### 🔐 Next Steps for the Team
-
-As you continue developing, use this platform to implement and test additional security patches related to:
-
-- **Confidentiality:** (e.g., encryption, secure sessions, access controls)
-- **Integrity:** (e.g., hashing, validation, audit logging)
-- **Availability:** (e.g., redundancy, failover mechanisms)
-- **Authentication:** (e.g., MFA, password policies, external identity providers)
-
-Each teammate should create a new branch for their patch, document their changes, and submit a pull request for review.
-
----
-
 ## 🧪 Testing
 
 To run the DoS comparison test (optional):
 
 ```bash
 cd app
-python3 postFlood_compare.py
+python3 attack_scripts/rate_limit_test.py
 ```
 
 ---
@@ -122,6 +116,4 @@ docker-compose up -d
 
 ## 📝 Notes
 
-- Each teammate’s database is private and local.
 - This repository currently demonstrates availability protections via rate limiting. Use it as a foundation for your own cybersecurity enhancements!
-- If you have issues, check container logs or ask in the team chat!
