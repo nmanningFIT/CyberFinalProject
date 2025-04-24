@@ -2,8 +2,8 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 
 # Test settings
-NUM_REQUESTS = 1000000  # Total requests to send
-CONCURRENT_REQUESTS = 200000  # Number of concurrent requests
+NUM_REQUESTS = 50  # Total requests to send
+CONCURRENT_REQUESTS = 5 # Number of concurrent requests
 
 # Target URLs
 RATE_LIMITED_URL = "http://127.0.0.1:5001/ManagerLogin"
