@@ -1,30 +1,15 @@
-# 🚦 Branch: feature/availability-improvements
+# Branch: feature/availability-improvements
 
-## 🔍 Branch-Specific Activities: Availability Improvements
+## Availability Improvements
 
 This branch focuses on enhancing the application's **availability** by implementing and demonstrating security controls that protect against Denial-of-Service (DoS) attacks. The primary feature is the integration of **rate limiting** to ensure the platform remains accessible and resilient under high request loads.
 
-### What’s Unique in this Branch?
-- **Rate Limiting Middleware:** Application endpoints are protected by rate limiting to mitigate DoS attacks.
-- **Attack Simulation Scripts:** Includes scripts (e.g., `attack_scripts/rate_limit_test.py`) to test and demonstrate the effectiveness of availability controls.
-- **Comparison Modes:** Provides both rate-limited and non-rate-limited versions for experimental purposes.
-- **Exclusion of Sensitive/Test Files:** Certain files (e.g., `DB_CONNECTION_FIX.md`, `LOGIN_FIX_REPORT.md`, and specific attack scripts) are excluded from the repository and ignored in version control for security and clarity.
-
-> This branch is intended for demonstration and experimentation with availability controls. For the stable, baseline version, refer to the `main-baseline` branch.
-
 ---
-
-## 🐳 Availability Improvements Branch
-
-This branch is dedicated exclusively to implementing and demonstrating **availability-focused security controls** for the application.
 
 ### Key Activities in this Branch
 - **Rate Limiting:** Integration of rate limiting middleware to defend against Denial-of-Service (DoS) attacks and ensure the application remains accessible under load.
 - **Testing & Simulation:** Includes scripts (such as `attack_scripts/rate_limit_test.py`) to simulate attack scenarios and validate the effectiveness of availability controls.
 - **Comparison Modes:** Supports running the application with and without rate limiting for direct experimentation.
-- **Repository Hygiene:** Excludes sensitive/test files (e.g., `DB_CONNECTION_FIX.md`, `LOGIN_FIX_REPORT.md`, certain attack scripts) from version control for security and clarity.
-
-> This branch is focused solely on availability. For other security aspects, refer to the appropriate branches.
 
 ---
 
