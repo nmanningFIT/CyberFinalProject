@@ -68,13 +68,12 @@ class Duty(db.Model):
 
 @app.route("/")
 def home():
+    print("Secure Webstie")
     return render_template("index.html")
-
 
 @app.route("/index")
 def index():
     return render_template("index.html")
-
 
 @app.route("/ManagerLogin", methods=["GET", "POST"])
 def managerLogin():
@@ -96,8 +95,7 @@ def managerLogin():
             return render_template("ManagerLogin.html", error="Invalid username or password")
         
         print(f"[DEBUG] Found user: {data.username}, stored password: {data.pword}")
-        
-        # Check if password is already hashed (starts with $2b$)
+
         if data.pword.startswith('$2b$'):
             print("[DEBUG] Using bcrypt verification")
             is_valid = bcrypt.check_password_hash(data.pword, pword)
@@ -111,8 +109,7 @@ def managerLogin():
             app.logger.info(f"Successful login for user: {username}")
             session["logged_in"] = True
             session["username"] = username
-            
-            # Fetch required data for dashboard
+
             security = Security.query.filter_by(domain="Security").order_by(Security.name).all()
             abes = Absence.query.filter_by(status="Pending").order_by(Absence.timestamp).all()
             duty = Duty.query.order_by(Duty.ddate).all()
@@ -155,48 +152,36 @@ def securityLogin():
             print("dont login 2")
             return "Dont Login except"
 
-
 @app.route("/logout")
 def logout():
     session.pop("username", None)
     return redirect(url_for("index"))
 
 
-@app.route("/ManagerRegister", methods=["GET", "POST"])
-def managerRegister():
-    if request.method == "GET":
-        return render_template("ManagerRegister.html")
-    else:
-        name = request.form.get("name")
-        username = request.form.get("username")
-        domain = "Manager"
-        idno = request.form.get("idno")
-        pword = request.form.get("pword")
-        
-        # Check if username already exists
-        existing_user = Manager.query.filter_by(username=username).first()
-        if existing_user:
-            return "Username already exists", 400
-            
-        # Hash the password
-        hashed_password = bcrypt.generate_password_hash(pword).decode('utf-8')
-        
-        # Create new manager
-        manager = Manager(
-            name=name,
-            username=username,
-            domain=domain,
-            idno=idno,
-            pword=hashed_password
-        )
-        
-        try:
-            db.session.add(manager)
-            db.session.commit()
-            return redirect(url_for('managerLogin'))
-        except Exception as e:
-            db.session.rollback()
-            return f"Registration failed: {str(e)}", 500
+@app.route("/manager/<username>")
+def view_manager_dashboard(username):
+    if not session.get("logged_in") or session.get("username") != username:
+        app.logger.warning(
+            f"Unauthorized access attempt by {session.get('username')} to {username}")
+        return render_template("unauthorized.html"), 403
+
+    manager = Manager.query.filter_by(username=username).first()
+    if not manager:
+        return "Manager not found", 404
+
+    security = Security.query.filter_by(
+        domain="Security").order_by(Security.name).all()
+    abes = Absence.query.filter_by(
+        status="Pending").order_by(Absence.timestamp).all()
+    duty = Duty.query.order_by(Duty.ddate).all()
+
+    return render_template(
+        "managerdash.html",
+        security=security,
+        abes=abes,
+        username=manager.username,
+        duty=duty
+    )
 
 
 @app.route("/createduty", methods=["GET", "POST"])
@@ -281,4 +266,4 @@ def contact():
     return render_template("contact.html")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True)
