@@ -77,8 +77,8 @@ Team members will each focus on one aspect of the CIA security triad:
 ### Development Workflow
 1. Create your feature branch:
 ```bash
-git checkout -b feature/[cia-aspect]-improvements
-# Example: git checkout -b feature/confidentiality-improvements
+git checkout -b [firstname-lastname]/[cia-aspect]-improvements
+# Example: git checkout -b joe-smith/confidentiality-improvements
 ```
 
 2. Make and test your changes
