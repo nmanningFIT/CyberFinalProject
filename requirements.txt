@@ -3,4 +3,3 @@ flask_sqlalchemy
 flask_bcrypt
 pymysql
 cryptography
-requests
