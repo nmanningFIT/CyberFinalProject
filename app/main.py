@@ -1,11 +1,12 @@
-from datetime import date, datetime
-from flask import Flask, render_template, redirect, url_for, session, request, g
+
+from flask import Flask, render_template, redirect, url_for, session, request
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
 
 pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
+app.jinja_env.autoescape = False
 app.secret_key = "super-secret-key"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:example@db/onlinesystem'
 db = SQLAlchemy(app)
