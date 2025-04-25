@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         - FLASK_APP=main.py
-    image: michaelwayne/cyb5272-flaskapp-no-ratelimit:latest
+    image: humblefool07/cyberfinalproject-flaskapp_confidentiality:latest
 
     ports:
       - "5050:5000"
@@ -16,7 +16,7 @@ services:
         condition: service_completed_successfully
     environment:
       - FLASK_ENV=development
-      - FLASK_APP=secure.py
+      - FLASK_APP=main.py
       - MYSQL_HOST=db
       - MYSQL_USER=root
       - MYSQL_PASSWORD=example
@@ -28,7 +28,6 @@ services:
 
   db:
     image: mysql:8.0
-
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
@@ -49,7 +48,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: michaelwayne/cyb5272-db-init:latest
+    image: humblefool07/cyb5272-db-init:latest
 
     depends_on:
       db:
