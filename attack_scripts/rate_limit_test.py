@@ -2,8 +2,8 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 
 # Test settings
-NUM_REQUESTS = 50  # Total requests to send
-CONCURRENT_REQUESTS = 5 # Number of concurrent requests
+NUM_REQUESTS = 500  # Total requests to send
+CONCURRENT_REQUESTS = 50 # Number of concurrent requests
 
 # Target URLs
 RATE_LIMITED_URL = "http://127.0.0.1:5001/ManagerLogin"
@@ -59,12 +59,12 @@ def main():
     
     # Print comparison
     print("\n=== Results Comparison ===")
-    print("\nRate Limited Version:")
+    print("\nRate Limited Version (Port 5001):")
     print(f"Successful: {rate_limited_results['success']}")
     print(f"Rate Limited: {rate_limited_results['rate_limited']}")
     print(f"Errors: {rate_limited_results['error']}")
     
-    print("\nNon-Rate Limited Version:")
+    print("\nNon-Rate Limited Version (Port 5002):")
     print(f"Successful: {non_rate_limited_results['success']}")
     print(f"Rate Limited: {non_rate_limited_results['rate_limited']}")
     print(f"Errors: {non_rate_limited_results['error']}")

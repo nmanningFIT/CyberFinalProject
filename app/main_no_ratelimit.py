@@ -74,34 +74,61 @@ def home():
 def index():
     return render_template("index.html")
 
-
 @app.route("/ManagerLogin", methods=["GET", "POST"])
 def managerLogin():
     if request.method == "GET":
         return render_template("ManagerLogin.html")
-    else:
-        username = request.form.get("username")
-        pword = request.form.get("pword")
+    
+    username = request.form.get("username")
+    pword = request.form.get("pword")
+    
+    if not username or not pword:
+        return "Username and password are required", 400
+    
+    try:
+        print(f"[DEBUG] Login attempt - username: {username}, password length: {len(pword)}")
         data = Manager.query.filter_by(username=username).first()
-
-        if data is not None and bcrypt.check_password_hash(data.pword, pword):
+        
+        if not data:
+            print(f"[DEBUG] No user found with username: {username}")
+            return render_template("ManagerLogin.html", error="Invalid username or password")
+        
+        print(f"[DEBUG] Found user: {data.username}, stored password: {data.pword}")
+        
+        # Check if password is already hashed (starts with $2b$)
+        if data.pword.startswith('$2b$'):
+            print("[DEBUG] Using bcrypt verification")
+            is_valid = bcrypt.check_password_hash(data.pword, pword)
+        else:
+            print("[DEBUG] Using direct comparison")
+            is_valid = (data.pword == pword)
+            
+        print(f"[DEBUG] Password valid: {is_valid}")
+            
+        if is_valid:
+            app.logger.info(f"Successful login for user: {username}")
             session["logged_in"] = True
-            security = (
-                Security.query.filter_by(domain="Security")
-                .order_by(Security.name)
-                .all()
-            )
-            abes = (
-                Absence.query.filter_by(status="Pending")
-                .order_by(Absence.timestamp)
-                .all()
-            )
+            session["username"] = username
+            
+            # Fetch required data for dashboard
+            security = Security.query.filter_by(domain="Security").order_by(Security.name).all()
+            abes = Absence.query.filter_by(status="Pending").order_by(Absence.timestamp).all()
             duty = Duty.query.order_by(Duty.ddate).all()
+            
             return render_template(
-                "Managerdash.html", security=security, abes=abes, duty=duty
+                "managerdash.html",
+                security=security,
+                abes=abes,
+                username=data.username,
+                duty=duty
             )
         else:
-            return "Dont Login"
+            app.logger.warning(f"Invalid password for user: {username}")
+            return render_template("ManagerLogin.html", error="Invalid username or password")
+            
+    except Exception as e:
+        app.logger.error(f"Database error during login: {str(e)}")
+        return render_template("ManagerLogin.html", error="An error occurred. Please try again later.")
 
 
 @app.route("/SecurityLogin", methods=["GET", "POST"])
@@ -126,48 +153,10 @@ def securityLogin():
             print("dont login 2")
             return "Dont Login except"
 
-
 @app.route("/logout")
 def logout():
     session.pop("username", None)
     return redirect(url_for("index"))
-
-
-@app.route("/ManagerRegister", methods=["GET", "POST"])
-def managerRegister():
-    if request.method == "GET":
-        return render_template("ManagerRegister.html")
-    else:
-        name = request.form.get("name")
-        username = request.form.get("username")
-        domain = "Manager"
-        idno = request.form.get("idno")
-        pword = request.form.get("pword")
-        
-        # Check if username already exists
-        existing_user = Manager.query.filter_by(username=username).first()
-        if existing_user:
-            return "Username already exists", 400
-            
-        # Hash the password
-        hashed_password = bcrypt.generate_password_hash(pword).decode('utf-8')
-        
-        # Create new manager
-        manager = Manager(
-            name=name,
-            username=username,
-            domain=domain,
-            idno=idno,
-            pword=hashed_password
-        )
-        
-        try:
-            db.session.add(manager)
-            db.session.commit()
-            return redirect(url_for('managerLogin'))
-        except Exception as e:
-            db.session.rollback()
-            return f"Registration failed: {str(e)}", 500
 
 
 @app.route("/createduty", methods=["GET", "POST"])

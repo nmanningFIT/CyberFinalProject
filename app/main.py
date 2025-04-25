@@ -18,8 +18,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:example@db/onlines
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
-# initialize the rate limiter
-limiter = Limiter(key_func=get_remote_address)
+# initialize the rate limiter with a global limit
+limiter = Limiter(key_func=get_remote_address, default_limits=["100 per minute"])
 
 # bind the limiter to the app
 limiter.init_app(app)
@@ -174,43 +174,6 @@ def securityLogin():
 def logout():
     session.pop("username", None)
     return redirect(url_for("index"))
-
-
-@app.route("/ManagerRegister", methods=["GET", "POST"])
-def managerRegister():
-    if request.method == "GET":
-        return render_template("ManagerRegister.html")
-    else:
-        name = request.form.get("name")
-        username = request.form.get("username")
-        domain = "Manager"
-        idno = request.form.get("idno")
-        pword = request.form.get("pword")
-        
-        # Check if username already exists
-        existing_user = Manager.query.filter_by(username=username).first()
-        if existing_user:
-            return "Username already exists", 400
-            
-        # Hash the password
-        hashed_password = bcrypt.generate_password_hash(pword).decode('utf-8')
-        
-        # Create new manager
-        manager = Manager(
-            name=name,
-            username=username,
-            domain=domain,
-            idno=idno,
-            pword=hashed_password
-        )
-        
-        try:
-            db.session.add(manager)
-            db.session.commit()
-            return redirect(url_for('managerLogin'))
-        except Exception as e:
-            db.session.rollback()
-            return f"Registration failed: {str(e)}", 500
 
 
 @app.route("/createduty", methods=["GET", "POST"])

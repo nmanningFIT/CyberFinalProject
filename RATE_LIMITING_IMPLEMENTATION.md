@@ -45,35 +45,7 @@ NON_RATE_LIMITED_URL = "http://127.0.0.1:5002/ManagerLogin"
 ```
 
 ### Output Example
-The script prints a table comparing the result of each request side by side:
-
-| Request # | Rate Limited Version | Non-Rate Limited Version |
-|-----------|---------------------|-------------------------|
-| 1         | Success             | Success                 |
-| 2         | Success             | Success                 |
-| ...       | ...                 | ...                     |
-
-A summary table is also printed at the end, showing the count of successful, rate-limited, and error responses for each endpoint.
-
-## Test Results
-
-### Rate-Limited Version (Port 5001)
-- First 5 requests successful
-- Subsequent requests rate-limited (HTTP 429)
-- Results:
-  - Total Requests: 30
-  - Successful: 5
-  - Rate Limited: 25
-  - Other Errors: 0
-
-### Non-Rate-Limited Version (Port 5002)
-- All requests successful
-- No rate limiting protection
-- Results:
-  - Total Requests: 30
-  - Successful: 30
-  - Rate Limited: 0
-  - Other Errors: 0
+![alt text](image.png)
 
 ## Security Benefits
 
@@ -125,11 +97,3 @@ A summary table is also printed at the end, showing the count of successful, rat
    - Add Retry-After headers
    - Improve rate limit exceeded messages
    - Implement progressive delays
-
-## Testing Validation
-The implementation successfully demonstrates:
-- Effective request rate control
-- Proper limit enforcement
-- Clear distinction between protected and unprotected endpoints
-- Reliable rate limit counting
-- Appropriate HTTP status codes
