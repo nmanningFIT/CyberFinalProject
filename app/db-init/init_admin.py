@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
 import pymysql
 import time
 from sqlalchemy.exc import OperationalError
@@ -13,7 +12,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:example@db/onlinesystem'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
 
 def wait_for_db(max_retries=30, delay_seconds=2):
     """Wait for database to be ready with retries"""
@@ -93,24 +91,24 @@ def init_admin():
             manager = Manager.query.filter_by(username="ABC").first()
             if manager is None:
                 # Create default manager
-                hashed_password = bcrypt.generate_password_hash("00000").decode('utf-8')
+                # hashed_password = bcrypt.generate_password_hash("00000").decode('utf-8')
                 manager = Manager(
                     name="ABC",
                     username="ABC",
                     domain="Manager",
                     idno="00000",
-                    pword=hashed_password
+                    pword="00000"
                 )
                 db.session.add(manager)
 
                 # Create second manager (PK)
-                hashed_password = bcrypt.generate_password_hash("example").decode('utf-8')
+                # hashed_password = bcrypt.generate_password_hash("example").decode('utf-8')
                 manager2 = Manager(
                     name="PK",
                     username="prk@123",
                     domain="Manager",
                     idno="01236",
-                    pword=hashed_password
+                    pword="12345"
                 )
                 db.session.add(manager2)
                 db.session.commit()

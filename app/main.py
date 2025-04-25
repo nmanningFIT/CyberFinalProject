@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from flask_bcrypt import Bcrypt
 from flask import Flask, render_template, redirect, url_for, session, request, g
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
@@ -10,7 +9,6 @@ app = Flask(__name__)
 app.secret_key = "super-secret-key"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:example@db/onlinesystem'
 db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
 
 class Contact(db.Model):
     __tablename__ = 'Contact'
@@ -95,7 +93,7 @@ def managerLogin():
                 abes = conn.execute(db.text("SELECT * FROM Absence")).fetchall()
                 duty = conn.execute(db.text("SELECT * FROM Duty")).fetchall()
             return render_template(
-                "Managerdash.html", security=security, abes=abes, duty=duty
+                "Managerdash.html", security=security, abes=abes, duty=duty, username=result.username
             )
         else:
             return "Dont Login"
@@ -128,24 +126,6 @@ def logout():
     return redirect(url_for("index"))
 
 
-@app.route("/ManagerRegister", methods=["GET", "POST"])
-def managerRegister():
-    if request.method == "GET":
-        return render_template("ManagerRegister.html")
-    else:
-        name = request.form.get("name")
-        username = request.form.get("username")
-        domain = "Manager"
-        idno = request.form.get("idno")
-        pword = request.form.get("pword")
-        # Fully vulnerable: raw SQL with direct user input, no password hashing
-        query = f"INSERT INTO Manager (name, username, domain, idno, pword) VALUES ('{name}', '{username}', '{domain}', '{idno}', '{pword}')"
-        with db.engine.connect() as conn:
-            conn.execute(db.text(query))
-            conn.commit()
-        return redirect(url_for("managerLogin"))
-
-
 @app.route("/createduty", methods=["GET", "POST"])
 def createduty():
     if request.method == "GET":
@@ -169,6 +149,27 @@ def securitydashboard():
     else:
         return redirect(url_for("securityLogin"))
 
+@app.route("/manager/<username>")
+def view_manager_dashboard(username):
+    if not session.get("logged_in"):
+        return redirect(url_for("managerLogin"))
+
+    manager = Manager.query.filter_by(username=username).first()
+    if not manager:
+        return "Manager not found", 404
+
+    security = Security.query.filter_by(domain="Security").order_by(Security.name).all()
+    abes = Absence.query.filter_by(status="Pending").order_by(Absence.timestamp).all()
+    duty = Duty.query.order_by(Duty.ddate).all()
+
+    return render_template(
+        "managerdash.html",
+        security=security,
+        abes=abes,
+        username=manager.username,
+        duty=duty
+    )
+
 
 @app.route("/registration", methods=["GET", "POST"])
 def registration():
@@ -180,7 +181,7 @@ def registration():
         domain = request.form.get("domain")
         idno = request.form.get("idno")
         pword = request.form.get("pword")
-        pword = bcrypt.generate_password_hash(pword)
+        # pword = bcrypt.generate_password_hash(pword)
 
         if domain == "Manager":
             entry = Manager(
