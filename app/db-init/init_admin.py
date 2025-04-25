@@ -98,11 +98,25 @@ def init_admin():
                 )
                 db.session.add(manager)
 
+            manager2 = Manager.query.filter_by(username="jdoe").first()
+            if manager2 is None:
+                hashed_password = bcrypt.generate_password_hash(
+                    "00000").decode('utf-8')
+                manager2 = Manager(
+                    name="John Doe",
+                    username="jdoe",
+                    domain="Manager",
+                    idno="12345",
+                    pword=hashed_password
+                )
+                db.session.add(manager2)
+
             security = Security.query.filter_by(username="ABC").first()
             if security is None:
                 hashed_password = bcrypt.generate_password_hash(
                     "00000").decode('utf-8')
                 security = Security(
+                    id="1",
                     name="ABC",
                     username="ABC",
                     domain="Security",
