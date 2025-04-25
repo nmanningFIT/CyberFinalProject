@@ -1,5 +1,3 @@
-# Branch: feature/availability-improvements
-
 ## Availability Improvements
 
 This branch focuses on enhancing the application's **availability** by implementing and demonstrating security controls that protect against Denial-of-Service (DoS) attacks. The primary feature is the integration of **rate limiting** to ensure the platform remains accessible and resilient under high request loads.
