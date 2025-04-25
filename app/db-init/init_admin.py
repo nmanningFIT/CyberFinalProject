@@ -9,7 +9,6 @@ import sys
 pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
-# Hardcoded connection string matching docker-compose.yml settings
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:example@db/onlinesystem'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -21,7 +20,6 @@ def wait_for_db(max_retries=30, delay_seconds=2):
     while retry_count < max_retries:
         try:
             with app.app_context():
-                # Try to connect to the database
                 db.engine.connect()
                 print("Successfully connected to the database")
                 return True
@@ -86,13 +84,10 @@ def init_admin():
 
     try:
         with app.app_context():
-            # Create all tables
             db.create_all()
 
-            # Check if default manager exists
             manager = Manager.query.filter_by(username="ABC").first()
             if manager is None:
-                # Create default manager
                 hashed_password = bcrypt.generate_password_hash("00000").decode('utf-8')
                 manager = Manager(
                     name="ABC",
@@ -103,6 +98,8 @@ def init_admin():
                 )
                 db.session.add(manager)
 
+            security = Security.query.filter_by(username="ABC").first()
+            if security is None:
                 hashed_password = bcrypt.generate_password_hash(
                     "00000").decode('utf-8')
                 security = Security(
