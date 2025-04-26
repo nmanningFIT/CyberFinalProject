@@ -1,130 +1,107 @@
-# 🔒 CYB5272 Final Project
 
-## 📖 Project Description
+# Campus Security Management System — Cyber Threats Final Project
 
-This repository contains a Flask-based web application with MySQL integration, designed as a collaborative platform for implementing and demonstrating the CIA (Confidentiality, Integrity, Availability) triad of information security. The project is structured to support multiple user roles and is fully containerized for easy setup and consistent development environments.
-
-**Key Features:**
-- **Multiple User Roles:** Managers and Security personnel with distinct access levels
-- **MySQL Database:** All data is managed via a backend database, automatically initialized
-- **Dockerized Environment:** Ensures all contributors have the same setup
-- **Security Framework:** Ready for CIA triad security implementations
+This project demonstrates **two active confidentiality attacks** and their mitigations using a Flask-based Campus Security Management System.
 
 ---
 
-## 🚀 Quick Start
+## 🔐 Objective
 
-### 1. **Clone and Setup**
+To safeguard the **Confidentiality** pillar of the CIA Triad by simulating and fixing real-world vulnerabilities:
+- 🔓 Insider Threat
+- 🔓 Insecure Direct Object Reference (IDOR)
+
+---
+
+## 🔓 Attack 1: Insider Threat
+
+### ❗ Vulnerable Behavior:
+- User passwords are stored directly in **plaintext** in the database.
+- Anyone with DB access (developer, DBA, attacker) can read and leak credentials.
+
+**Example Table:**
+| ID | Username | Password   |
+|----|----------|------------|
+| 1  | ABC      | welcome123 |
+| 2  | jdoe     | manager456 |
+
+### 🔒 Mitigation: Use `bcrypt` for Hashing
+
+- Passwords are hashed with salt using the `bcrypt` library.
+- Prevents password disclosure even if DB is compromised.
+
+**During Registration:**
+```python
+hashed_password = bcrypt.generate_password_hash(pword).decode('utf-8')
+```
+
+**During Login:**
+```python
+bcrypt.check_password_hash(data.pword, pword)
+```
+
+**Hashed Result in DB:**
+```
+$2b$12$XUzVK02azjNV6MszJRVoyumD.1q8/fNARySTjqwGlZ2bZReR30gT6
+```
+
+---
+
+## 🔓 Attack 2: IDOR (Broken Access Control)
+
+### ❗ Vulnerable Behavior:
+- Route `/manager/<username>` allows any logged-in user to change the URL and view another user's dashboard.
+
+**Example:**
+```plaintext
+Logged in as ABC → /manager/ABC ✅
+Changed URL to /manager/jdoe → Accessed jdoe's data ❌
+```
+
+### 🔒 Mitigation: Session-Based Access Control
+
+- Route verifies that the session user matches the resource being accessed.
+
+**Code Fix:**
+```python
+if session.get("username") != username:
+    return render_template("unauthorized.html"), 403
+```
+
+- Unauthorized users see a styled error page with no data leakage.
+
+---
+
+## 🚀 How to Run
+### 1. **Clone the Repository**
 
 ```bash
-# Clone the repository
 git clone https://github.com/nmanningFIT/CyberFinalProject.git
 cd CyberFinalProject
-
-# Switch to baseline branch
-git checkout main-baseline
 ```
 
 ### 2. **Install Docker & Docker Compose**
 
 - [Install Docker Desktop](https://www.docker.com/products/docker-desktop/) (includes Compose)
 
-### 3. **Start the Application**
+### 3. **Pull the Prebuilt Images**
+
+```bash
+docker-compose pull
+```
+
+### 4. **Start the Application**
 
 ```bash
 docker-compose up -d
 ```
 
-This will start:
-- MySQL database (with your own local data)
-- Flask application (port 5050)
-- Database initialization service
-
-### 4. **Access the Application**
-
-- Web Application: [http://localhost:5050](http://localhost:5050)
-- Database: localhost:3307
-
-**Default credentials:**
-- Username: `ABC`
-- Password: `00000`
+- This will start:
+  - MySQL database (with your own local data)
+  - Flask app with confidentiality preserved (port 5050)
+  - Admin user is created automatically
 
 ---
+### 5. **Navigate to the url**
 
-## 🔐 Team Development
-
-### CIA Triad Implementation
-Team members will each focus on one aspect of the CIA security triad:
-
-1. **Confidentiality**
-   - Secure data transmission
-   - Access control implementation
-   - Session management
-   - Data encryption
-
-2. **Integrity**
-   - Input validation
-   - Data verification
-   - Audit logging
-   - Error handling
-
-3. **Availability**
-   - Rate limiting
-   - Load balancing
-   - Failover mechanisms
-   - Error recovery
-
-### Development Workflow
-1. Create your feature branch:
-```bash
-git checkout -b feature/[cia-aspect]-improvements
-# Example: git checkout -b feature/confidentiality-improvements
-```
-
-2. Make and test your changes
-3. Submit a pull request for review
-
----
-
-## 🛠️ Development Tips
-
-### Making Changes
-- All source code is mounted into containers
-- Changes apply instantly (Flask debug mode is on)
-- Rebuild if dependencies change:
-  ```bash
-  docker-compose up --build -d
-  ```
-
-### Useful Commands
-- View logs:
-  ```bash
-  docker-compose logs -f
-  ```
-- Reset database:
-  ```bash
-  docker-compose down -v
-  docker-compose up -d
-  ```
-
-### Database Access
-- Connect to MySQL shell:
-  ```bash
-  docker exec -it cyb5272-case-study-db-1 mysql -u root -pexample onlinesystem
-  ```
-- Common MySQL commands:
-  ```sql
-  -- List all tables
-  SHOW TABLES;
-  
-  -- View table structure
-  DESCRIBE users;
-  
-  -- Query data
-  SELECT * FROM users;
-  ```
-
-## 📝 Notes
-- Each developer's database is private and local
-- Check container logs for troubleshooting
-- Run `docker-compose logs -f` to see real-time container output
+  [http://localhost:5050/](http://localhost:5050/)
